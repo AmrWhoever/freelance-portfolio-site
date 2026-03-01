@@ -16,7 +16,7 @@
           </div>
           <!-- Improvement: fix Arabic spelling in boot screen brand to "عمرو تك". -->
           <h1 class="text-2xl text-cyan-300 font-bold tracking-widest">
-            عمرو تك
+            {{ homeContent.brandName }}
           </h1>
         </div>
 
@@ -68,7 +68,7 @@
             <h1
               class="text-5xl sm:text-7xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 mb-4 font-mono tracking-tighter relative z-10 hero-title"
             >
-              عمرو تك
+              {{ homeContent.brandName }}
             </h1>
             <div
               class="text-cyan-400 font-mono text-lg sm:text-xl tracking-widest mb-4 relative z-10 hero-subtitle"
@@ -644,6 +644,7 @@ const { dir, t, isEnglish } = useLocale()
 const homeContent = computed(() => {
   if (isEnglish.value) {
     return {
+      brandName: 'Amro Tech',
       performanceTab: 'Performance',
       featuresTab: 'Features',
       performanceStats: 'Performance Stats',
@@ -673,6 +674,7 @@ const homeContent = computed(() => {
   }
 
   return {
+    brandName: 'عمرو تك',
     performanceTab: 'الأداء',
     featuresTab: 'الميزات',
     performanceStats: 'إحصائيات الأداء',
