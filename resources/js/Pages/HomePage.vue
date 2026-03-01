@@ -448,14 +448,12 @@
                   <div
                     class="project-frame w-full h-64 sm:h-80 lg:h-96 bg-gray-800 rounded-xl overflow-hidden relative border border-cyan-500/20"
                   >
-                    <iframe
-                      src="https://sakkbah.sa/"
-                      class="w-full h-full border-0"
-                      title="Sakkbah Live Website Preview"
+                    <img
+                      src="/storage/images/image.png"
+                      :alt="isEnglish ? 'Featured project image' : 'صورة المشروع المميز'"
+                      class="w-full h-full object-cover"
                       loading="lazy"
-                      sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-presentation allow-orientation-lock allow-top-navigation allow-top-navigation-by-user-activation"
-                      allowfullscreen
-                    ></iframe>
+                    />
 
                     <div class="project-frame-glow"></div>
 
@@ -500,7 +498,7 @@
                     >Payment Gateway</span
                   >
                 </div>
-                <Link
+                <a
                   href="https://sakkbah.sa/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -509,7 +507,7 @@
                   <span>{{ homeContent.visitLiveSite }}</span>
                   <Icon name="arrow-right" />
                   <span class="cyber-button-glow"></span>
-                </Link>
+                </a>
               </div>
             </div>
           </div>
@@ -662,7 +660,7 @@ const homeContent = computed(() => {
       featuredProjectName: 'E-commerce Platform - Sakkbah',
       featuredProjectDescription:
         'A complete e-commerce platform with a modern interface, smooth browsing, and secure checkout tailored for the Saudi market.',
-      visitLiveSite: 'Visit live website',
+      visitLiveSite: 'Visit website',
       testimonialsTitle: 'Client Testimonials',
       testimonialsSubtitle: 'Client trust is our strongest proof',
       terminalTitle: 'Contact Terminal',
@@ -691,7 +689,7 @@ const homeContent = computed(() => {
     featuredProjectName: 'منصة تسوق إلكتروني - سكبّة',
     featuredProjectDescription:
       'منصة تسوق إلكتروني متكاملة تقدم تجربة فريدة للمستخدمين، مع واجهة عصرية وسهولة في التصفح والشراء. تم تصميمها لتلبية احتياجات السوق السعودي وتوفير تجربة تسوق سلسة وآمنة.',
-    visitLiveSite: 'زيارة الموقع المباشر',
+    visitLiveSite: 'زيارة الموقع',
     testimonialsTitle: 'آراء العملاء',
     testimonialsSubtitle: 'ثقة عملائنا هي شهادتنا الحقيقية',
     terminalTitle: 'محطة الاتصال',
