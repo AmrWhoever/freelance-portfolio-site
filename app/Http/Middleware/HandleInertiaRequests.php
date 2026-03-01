@@ -14,7 +14,8 @@ class HandleInertiaRequests extends Middleware
      *
      * @var string
      */
-    protected $rootView = 'app';
+    // Improvement: align root view with actual Blade file path to prevent "view not found" mismatches.
+    protected $rootView = 'layouts.app';
 
     /**
      * Determines the current asset version.

@@ -22,4 +22,24 @@ export default defineConfig({
             '@': '/resources/js',
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                // Improvement: split large third-party dependencies into dedicated chunks to reduce app entry chunk size.
+                manualChunks(id) {
+                    if (id.includes('node_modules/three')) {
+                        return 'vendor-three';
+                    }
+
+                    if (id.includes('node_modules/@tsparticles')) {
+                        return 'vendor-particles';
+                    }
+
+                    if (id.includes('node_modules/@inertiajs') || id.includes('node_modules/vue')) {
+                        return 'vendor-core';
+                    }
+                },
+            },
+        },
+    },
 });

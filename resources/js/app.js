@@ -1,23 +1,41 @@
-import './bootstrap';
-import '../css/app.css';
+import './bootstrap'
+import '../css/app.css'
 
-import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createApp, h } from 'vue'
+import { createInertiaApp } from '@inertiajs/vue3'
+
+import Particles from '@tsparticles/vue3'
+import { loadSlim } from '@tsparticles/slim'
 
 createInertiaApp({
   resolve: name => {
-    const pages = import.meta.glob('./Pages/**/*.vue', { eager: true });
-    const page = pages[`./Pages/${name}.vue`];
-    
+    // Improvement: lazy-load page components so each route can be code-split into smaller chunks.
+    const pages = import.meta.glob('./Pages/**/*.vue')
+    const page = pages[`./Pages/${name}.vue`]
+
     if (!page) {
-      throw new Error(`Page not found: ${name}`);
+      throw new Error(`Page not found: ${name}`)
     }
-    
-    return page;
+
+    // Improvement: return async module result for Inertia to avoid shipping all pages in the initial bundle.
+    return page()
   },
+
   setup({ el, App, props, plugin }) {
-    createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .mount(el);
+    const vueApp = createApp({
+      render: () => h(App, props),
+    })
+
+    // 🔹 Inertia
+    vueApp.use(plugin)
+
+    // 🔹 tsParticles (التسجيل الصح)
+    vueApp.use(Particles, {
+      init: async engine => {
+        await loadSlim(engine)
+      },
+    })
+
+    vueApp.mount(el)
   },
-});
+})

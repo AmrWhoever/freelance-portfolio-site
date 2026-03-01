@@ -3,12 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        Inertia::setRootView('layouts.app'); // lowercase, plural "layouts"
+        // Improvement: root view is now configured in HandleInertiaRequests middleware to keep a single source of truth.
     }
 }
