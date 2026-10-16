@@ -1,0 +1,46 @@
+name: AmroTech Pages
+on:
+  pull_request:
+    paths: ['frontend/**', '.github/workflows/amrotech-pages.yml']
+  push:
+    branches: [main, fix/cloudflare-responsive-layout]
+    paths: ['frontend/**', '.github/workflows/amrotech-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: amrotech-pages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: amrotech-pages
+          path: frontend/dist
+          retention-days: 7
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: amrotech-pages
+          path: dist
+      - name: Deploy existing Cloudflare Pages project
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=amrotech --branch=main
