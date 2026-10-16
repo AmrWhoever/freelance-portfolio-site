@@ -40,3 +40,15 @@ test('responsive width calculations leave mobile gutters and expand desktop', ()
   assert.equal(width(1920), 1600);
   assert.ok(width(1440) > 1180);
 });
+
+test('stats, services, and process steps remain visible when scroll reveal fails', async () => {
+  const assets = path.join(root, 'dist', 'assets');
+  const layouts = (await readdir(assets)).filter(file => /^layout-[a-f0-9]{12}\\.css$/.test(file));
+  assert.equal(layouts.length, 1);
+  const styles = await readFile(path.join(assets, layouts[0]), 'utf8');
+  assert.match(styles, /\\.amrotech-site \\[data-reveal\\]\\s*\\{\\s*opacity:\\s*1;\\s*transform:\\s*none;/);
+  const bundle = await readFile(path.join(assets, 'index-DwXrsU_4.js'), 'utf8');
+  for (const className of ['stats-strip', 'stat-item', 'services-grid', 'service-card', 'process-track', 'process-step']) {
+    assert.ok(bundle.includes(className), 'Missing homepage component: ' + className);
+  }
+});
