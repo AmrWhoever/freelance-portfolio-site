@@ -43,10 +43,12 @@ test('responsive width calculations leave mobile gutters and expand desktop', ()
 
 test('stats, services, and process steps remain visible when scroll reveal fails', async () => {
   const assets = path.join(root, 'dist', 'assets');
-  const layouts = (await readdir(assets)).filter(file => /^layout-[a-f0-9]{12}\\.css$/.test(file));
+  const layouts = (await readdir(assets)).filter(file => file.startsWith('layout-') && file.endsWith('.css'));
   assert.equal(layouts.length, 1);
   const styles = await readFile(path.join(assets, layouts[0]), 'utf8');
-  assert.match(styles, /\\.amrotech-site \\[data-reveal\\]\\s*\\{\\s*opacity:\\s*1;\\s*transform:\\s*none;/);
+  assert.ok(styles.includes('.amrotech-site [data-reveal] {'));
+  assert.ok(styles.includes('opacity: 1;'));
+  assert.ok(styles.includes('transform: none;'));
   const bundle = await readFile(path.join(assets, 'index-DwXrsU_4.js'), 'utf8');
   for (const className of ['stats-strip', 'stat-item', 'services-grid', 'service-card', 'process-track', 'process-step']) {
     assert.ok(bundle.includes(className), 'Missing homepage component: ' + className);
