@@ -71,3 +71,14 @@ html[dir="rtl"] .amrotech-site .footer-grid a[href^="tel:"] {
   .amrotech-site .footer-bottom { gap: 12px; padding-block: 18px; }
   .amrotech-site .nav-inner { gap: 8px; }
 }
+
+/* Content-first reveal fallback.
+   The recovered build initially hides [data-reveal] elements and depends on an
+   IntersectionObserver callback to make them visible. On some previews that
+   callback is missed, leaving service cards, statistics, and the four process
+   steps invisible while their sections still occupy space. Keep content
+   visible regardless of script timing or browser observer behavior. */
+.amrotech-site [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
