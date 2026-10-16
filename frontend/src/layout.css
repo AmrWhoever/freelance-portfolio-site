@@ -25,6 +25,12 @@
   direction: ltr;
   unicode-bidi: isolate;
 }
+/* LTR character order must not move contact values to the left in Arabic. */
+html[dir="rtl"] .amrotech-site .footer-grid a[href^="mailto:"],
+html[dir="rtl"] .amrotech-site .footer-grid a[href^="tel:"] {
+  text-align: right;
+  align-self: stretch;
+}
 .amrotech-site .form-grid > *,
 .amrotech-site .project-form,
 .amrotech-site .hero-services > * { min-width: 0; }
