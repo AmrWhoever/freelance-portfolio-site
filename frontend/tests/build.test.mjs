@@ -9,7 +9,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 execFileSync(process.execPath, ['build.mjs'], { cwd: root });
 const html = await readFile(path.join(root, 'dist/index.html'), 'utf8');
 test('deployable entry stays static and includes versioned layout after baseline', () => {
-  assert.match(html, /<div id="app"><\/div>/);
+  assert.match(html, /<div id="app">[\s\S]*<h1/);
   assert.match(html, /<body class="amrotech-site">/);
   assert.match(html, /index-kYHI7fEq\.css[\s\S]*layout-[a-f0-9]{12}\.css/);
   assert.doesNotMatch(html, /@vite|\.php|\.env|localhost/);
@@ -29,7 +29,39 @@ test('all local entry and lazy scene dependencies exist; scripts parse', async (
 });
 test('output excludes backend, credentials, and dependency directories', async () => {
   assert.deepEqual((await readdir(path.join(root, 'dist'))).sort(),
-    ['amrotech-mark.svg', 'assets', 'build-info.json', 'index.html']);
+    ['404.html', '_headers', 'amrotech-mark.svg', 'assets', 'build-info.json', 'index.html', 'robots.txt', 'sitemap.xml']);
+});
+
+test('homepage is crawlable without executing JavaScript and has one canonical', () => {
+  for (const name of ['service-card', 'process-step', 'mailto:Amrwhoever@gmail.com', 'https://wa.me/']) {
+    assert.ok(html.includes(name), name);
+  }
+  assert.equal((html.match(/rel="canonical"/g) || []).length, 1);
+  assert.match(html, /rel="canonical" href="https:\/\/amrotech.pages.dev\/"/);
+  assert.doesNotMatch(html, /name="robots" content="noindex/);
+  assert.match(html, /<title>[^<]*AmroTech/);
+  const structured = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);
+  assert.equal(structured['@graph'][1]['@type'], 'WebSite');
+  assert.deepEqual(structured['@graph'][1].inLanguage, ['ar', 'en']);
+  assert.doesNotMatch(html, /hreflang=/); // No separate language URLs exist yet.
+});
+
+test('indexing files contain real directives and only the canonical homepage', async () => {
+  const robots = await readFile(path.join(root, 'dist/robots.txt'), 'utf8');
+  assert.match(robots, /User-agent: \*\nAllow: \//);
+  assert.match(robots, /Sitemap: https:\/\/amrotech.pages.dev\/sitemap.xml/);
+  const sitemap = await readFile(path.join(root, 'dist/sitemap.xml'), 'utf8');
+  assert.equal((sitemap.match(/<loc>/g) || []).length, 1);
+  assert.match(sitemap, /<loc>https:\/\/amrotech.pages.dev\/<\/loc>/);
+  assert.doesNotMatch(sitemap, /#[a-z]|localhost|\.php/);
+  assert.match(await readFile(path.join(root, 'dist/404.html'), 'utf8'), /content="noindex,follow"/);
+  const headers = await readFile(path.join(root, 'dist/_headers'), 'utf8');
+  assert.match(headers, /Content-Type: application\/xml/);
+  assert.match(headers, /\/build-info.json\n  X-Robots-Tag: noindex/);
+  const assets = await readdir(path.join(root, 'dist/assets'));
+  const search = assets.filter(name => /^search-[a-f0-9]{12}\.js$/.test(name));
+  assert.equal(search.length, 1);
+  execFileSync(process.execPath, ['--check', path.join(root, 'dist/assets', search[0])]);
 });
 test('responsive width calculations leave mobile gutters and expand desktop', () => {
   const width = viewport => Math.min(1600, viewport - Math.min(112, Math.max(40, viewport * .06)));
@@ -54,3 +86,4 @@ test('stats, services, and process steps remain visible when scroll reveal fails
     assert.ok(bundle.includes(className), 'Missing homepage component: ' + className);
   }
 });
+
